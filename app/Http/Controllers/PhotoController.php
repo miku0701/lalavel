@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class PhotoController extends Controller
 {
@@ -24,24 +25,21 @@ class PhotoController extends Controller
         return view('photos.create');
     }
 
-    //アップロード完了
+    //アップロード処理
     public function store(Request $request)
     {
         $savedFilePath = $request->file('image')->store('photos','public');
         Log::debug($savedFilePath);
+        $fileName = pathinfo($savedFilePath, PATHINFO_BASENAME);
+        log::debug($fileName);
 
-        return to_route('photos.create')->with('success','アップロードしました');
+        return to_route('photos.show', ['photo' => $fileName])->with('success','アップロードしました');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    //アップロード画像の表示
+    public function show($fileName)
     {
-        //
+        return view('photos.show', ['fileName' => $fileName]);
     }
 
     /**
@@ -67,14 +65,11 @@ class PhotoController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    //アップロード画像の削除処理
+    public function destroy($fileName)
     {
-        //
+        Storage::disk('public')->delete('photos/'. $fileName);
+        return to_route('photos.create')->with('success', '削除しました');
     }
 }
+?>
