@@ -5,6 +5,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\RequestSampleController;
 use App\Http\Controllers\UtilityController;
 use App\Http\Controllers\HiLowController;
+use App\Http\Controllers\PhotoController;
 use GuzzleHttp\Psr7\Request;
 use Illuminate\Http\Client\Events\RequestSending;
 use Illuminate\Support\Facades\Route;
@@ -62,3 +63,4 @@ Route::post('/hi-low', [HiLowController::class, 'result']);
 
 //ファイル管理
 Route::resource('/photos', \App\Http\Controllers\PhotoController::class)->only(['create', 'store' ,'show' ,'destroy']);
+Route::get('/photos/{photo}/download', [PhotoController::class, 'download'])->name('photos.download');
